@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card } from '@/components/ui/card';
@@ -47,19 +46,18 @@ export default function DashboardPage() {
         return;
       }
 
-      const { error } = await supabase
+      const { error: upsertError } = await supabase
         .from('user_profiles')
         .upsert({
           id: session.user.id,
           username,
           bio,
-          updated_at: new Date().toISOString(),
-        }, {
-          onConflict: 'id'
+          updated_at: new Date().toISOString()
         });
 
-      if (error) throw error;
-      toast.success('Profile updated successfully!');
+      if (upsertError) throw upsertError;
+      toast.success('Profile updated successfully');
+      await fetchProfile();
     } catch (error) {
       console.error('Error updating profile:', error);
       toast.error('Failed to update profile');
