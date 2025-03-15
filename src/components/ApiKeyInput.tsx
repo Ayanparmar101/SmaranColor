@@ -18,13 +18,13 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({ onApiKeySubmit }) => {
     const envApiKey = import.meta.env.VITE_OPENAI_API_KEY;
     if (envApiKey) {
       onApiKeySubmit(envApiKey);
+      return;
+    }
+    const savedApiKey = localStorage.getItem('openaiApiKey');
+    if (savedApiKey) {
+      onApiKeySubmit(savedApiKey);
     } else {
-      const savedApiKey = localStorage.getItem('openaiApiKey');
-      if (savedApiKey) {
-        onApiKeySubmit(savedApiKey);
-      } else {
-        setOpen(true);
-      }
+      setOpen(true);
     }
   }, [onApiKeySubmit]);
 
