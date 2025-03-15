@@ -30,8 +30,8 @@ export default function DashboardPage() {
 
       if (error) throw error;
       setProfile(data);
-      setUsername(data.username);
-      setBio(data.bio || '');
+      setUsername(data?.username || '');
+      setBio(data?.bio || '');
     } catch (error) {
       console.error('Error fetching profile:', error);
     } finally {
@@ -55,50 +55,51 @@ export default function DashboardPage() {
 
       if (error) throw error;
       toast.success('Profile updated successfully!');
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      toast.error('Failed to update profile');
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
+      </div>
+    );
+  }
 
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
-      <div className="grid gap-6">
-        <Card className="p-6">
-          <h2 className="text-xl font-semibold mb-4">Profile Settings</h2>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-1">Username</label>
-              <Input
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Enter username"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Bio</label>
-              <Textarea
-                value={bio}
-                onChange={(e) => setBio(e.target.value)}
-                placeholder="Tell us about yourself"
-              />
-            </div>
-            <Button onClick={updateProfile}>Save Changes</Button>
-          </div>
-        </Card>
-
-        <Card className="p-6">
-          <h2 className="text-xl font-semibold mb-4">Stats</h2>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-gray-500">Total Time Spent</p>
-              <p className="text-2xl font-bold">{Math.round(profile.total_time_spent / 60)} mins</p>
-            </div>
-          </div>
-        </Card>
+    <div className="max-w-2xl mx-auto space-y-8">
+      <div>
+        <h1 className="text-3xl font-bold">My Profile</h1>
+        <p className="text-muted-foreground mt-2">Manage your account settings and preferences.</p>
       </div>
+
+      <Card className="p-6 space-y-6">
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Username</label>
+          <Input
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Enter your username"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Bio</label>
+          <Textarea
+            value={bio}
+            onChange={(e) => setBio(e.target.value)}
+            placeholder="Tell us about yourself"
+            rows={4}
+          />
+        </div>
+
+        <Button onClick={updateProfile} className="w-full">
+          Save Changes
+        </Button>
+      </Card>
     </div>
   );
 }

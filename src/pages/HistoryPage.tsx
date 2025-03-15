@@ -43,36 +43,57 @@ export default function HistoryPage() {
         return (
           <div className="space-y-2">
             <h3 className="font-semibold">Grammar Quiz</h3>
-            <p>Score: {activity.content.score}/{activity.content.total}</p>
-            <Button onClick={() => navigate(`/grammar/review/${activity.id}`)}>
+            <p className="text-sm text-muted-foreground">
+              Score: {activity.content.score}/{activity.content.total}
+            </p>
+            <Button 
+              variant="outline"
+              size="sm"
+              onClick={() => navigate(`/grammar/review/${activity.id}`)}
+            >
               Review Quiz
             </Button>
           </div>
         );
-      // Add other activity types here
       default:
-        return <p>{JSON.stringify(activity.content)}</p>;
+        return <p className="text-sm text-muted-foreground">{JSON.stringify(activity.content)}</p>;
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
+      </div>
+    );
+  }
 
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-6">Activity History</h1>
+    <div className="max-w-3xl mx-auto space-y-8">
+      <div>
+        <h1 className="text-3xl font-bold">Activity History</h1>
+        <p className="text-muted-foreground mt-2">Review your past activities and progress.</p>
+      </div>
+
       <div className="grid gap-4">
-        {activities.map((activity) => (
-          <Card key={activity.id} className="p-4">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-sm text-gray-500">
-                  {formatDistanceToNow(new Date(activity.created_at), { addSuffix: true })}
-                </p>
-                {renderActivityContent(activity)}
-              </div>
-            </div>
+        {activities.length === 0 ? (
+          <Card className="p-6 text-center text-muted-foreground">
+            No activities found. Start learning to see your progress!
           </Card>
-        ))}
+        ) : (
+          activities.map((activity) => (
+            <Card key={activity.id} className="p-4 hover:bg-muted/50 transition-colors">
+              <div className="flex justify-between items-start">
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground">
+                    {formatDistanceToNow(new Date(activity.created_at), { addSuffix: true })}
+                  </p>
+                  {renderActivityContent(activity)}
+                </div>
+              </div>
+            </Card>
+          ))
+        )}
       </div>
     </div>
   );
