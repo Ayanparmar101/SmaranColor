@@ -18,11 +18,9 @@ const SocraticTutorPage = () => {
   const [isApiKeySet, setIsApiKeySet] = useState(!!openaiService.getApiKey());
   const conversationEndRef = useRef<HTMLDivElement>(null);
 
-  // Scroll to bottom of conversation
+  // Scroll function kept but not used
   const scrollToBottom = () => {
-    if (conversationEndRef.current) {
-      conversationEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
+    // Disabled automatic scrolling
   };
 
   // Handle API key change

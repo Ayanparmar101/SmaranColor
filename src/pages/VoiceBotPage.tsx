@@ -222,7 +222,6 @@ const VoiceBotPage = () => {
       <main className="flex-1 container mx-auto max-w-4xl p-4">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-kid-purple">Voice Bot</h1>
-          <ApiKeyInput onApiKeySubmit={handleApiKeySubmit} />
         </div>
         
         <div className="bg-white rounded-xl shadow-md p-4 mb-4 h-[60vh] overflow-y-auto">
