@@ -44,7 +44,6 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({ onApiKeySubmit }) => {
     localStorage.setItem('openaiApiKey', apiKey);
     onApiKeySubmit(apiKey);
     setOpen(false);
-    toast.success('API key saved successfully!');
   };
 
   return (
