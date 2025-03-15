@@ -64,7 +64,7 @@ const VoiceBotPage = () => {
         } 
       });
       mediaRecorderRef.current = new MediaRecorder(stream, {
-        mimeType: 'audio/wav'
+        mimeType: 'audio/webm'
       });
       audioChunksRef.current = [];
       mediaRecorderRef.current.ondataavailable = (event) => {
@@ -105,9 +105,9 @@ const VoiceBotPage = () => {
       });
 
       // Create audio file from chunks
-      const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
+      const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
       const formData = new FormData();
-      formData.append('file', audioBlob, 'audio.wav');
+      formData.append('file', audioBlob, 'audio.webm');
       formData.append('model', 'whisper-1');
       formData.append('language', 'en');
 
