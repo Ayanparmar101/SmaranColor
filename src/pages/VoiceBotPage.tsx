@@ -51,13 +51,67 @@ const VoiceBotPage = () => {
     localStorage.setItem('openai-api-key', key);
   };
 
-  const startListening = () => {
+  const startListening = async () => {
     try {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRecognition) {
-        toast.error("Speech recognition is not supported in your browser");
-        return;
-      }
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          sampleRate: 16000
+        } 
+      });
+      const mediaRecorder = new MediaRecorder(stream);
+      const audioChunks: Blob[] = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        audioChunks.push(event.data);
+      };
+
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        const formData = new FormData();
+        formData.append('file', audioBlob, 'audio.webm');
+        formData.append('model', 'whisper-1');
+        formData.append('language', 'en');
+
+        try {
+          const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${apiKey}`
+            },
+            body: formData
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to transcribe audio');
+          }
+
+          const data = await response.json();
+          setTranscript(data.text);
+          await fetchBotResponse(data.text);
+        } catch (error) {
+          toast.error('Failed to transcribe audio');
+          console.error('Error:', error);
+        }
+      };
+
+      mediaRecorder.start();
+      setIsListening(true);
+      toast.success('Listening...');
+
+      // Stop recording after 10 seconds
+      setTimeout(() => {
+        mediaRecorder.stop();
+        setIsListening(false);
+        stream.getTracks().forEach(track => track.stop());
+      }, 10000);
+
+    } catch (error) {
+      toast.error('Error starting speech recognition');
+      console.error('Error starting speech recognition:', error);
+    }
+  };
 
       recognitionRef.current = new SpeechRecognition();
       
