@@ -13,6 +13,8 @@ import SocraticTutorPage from "./pages/SocraticTutorPage";
 import AuthPage from "./pages/AuthPage";
 import AuthCallbackPage from "./pages/AuthCallbackPage";
 import NotFound from "./pages/NotFound";
+import HistoryPage from "./pages/HistoryPage";
+import DashboardPage from "./pages/DashboardPage";
 import { createContext, useEffect, useState } from "react";
 import { supabase } from "./integrations/supabase/client";
 import type { Session } from "@supabase/supabase-js";
@@ -63,7 +65,9 @@ const App = () => {
               <Route path="/auth" element={<AuthPage />} />
               <Route path="/auth/callback" element={<AuthCallbackPage />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
+              <Route path="/history" element={<HistoryPage />} />
+<Route path="/dashboard" element={<DashboardPage />} />
+<Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>

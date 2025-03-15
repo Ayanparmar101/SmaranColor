@@ -169,3 +169,69 @@ export type CompositeTypes<
   : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
     ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
+
+export interface Database {
+  public: {
+    Tables: {
+      user_activities: {
+        Row: {
+          id: string
+          user_id: string
+          activity_type: 'grammar' | 'story' | 'spoken' | 'voicebot' | 'socratic'
+          content: Json
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          activity_type: 'grammar' | 'story' | 'spoken' | 'voicebot' | 'socratic'
+          content: Json
+          created_at?: string
+        }
+      }
+      user_profiles: {
+        Row: {
+          id: string
+          username: string
+          total_time_spent: number
+          created_at: string
+          avatar_url?: string
+          bio?: string
+        }
+        Insert: {
+          id: string
+          username: string
+          total_time_spent?: number
+          created_at?: string
+          avatar_url?: string
+          bio?: string
+        }
+      }
+      user_scores: {
+        Row: {
+          id: string
+          user_id: string
+          quiz_type: string
+          score: number
+          total_questions: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          quiz_type: string
+          score: number
+          total_questions: number
+          created_at?: string
+        }
+      }
+    }
+  }
+}
