@@ -64,9 +64,12 @@ const VoiceBotPage = () => {
         setTranscript(transcript);
       };
 
-      recognitionRef.current.onend = () => {
+      recognitionRef.current.onend = async () => {
         console.log("Speech recognition ended");
         setIsListening(false);
+        if (transcript.trim()) {
+          await handleSubmitVoice(transcript);
+        }
       };
 
       recognitionRef.current.onerror = (event) => {
@@ -100,8 +103,30 @@ const VoiceBotPage = () => {
     await fetchBotResponse(text);
   };
 
-  const addMessage = (text: string, role: "user" | "bot") => { //Kept from original
+  const addMessage = (text: string, role: "user" | "bot") => {
     setMessages((prevMessages) => [...prevMessages, { role, text }]);
+  };
+
+  const fetchBotResponse = async (text: string) => {
+    try {
+      setLoading(true);
+      // Replace this with your actual API call
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: text, apiKey }),
+      });
+      
+      const data = await response.json();
+      addMessage(data.response, 'bot');
+    } catch (error) {
+      console.error('Error fetching bot response:', error);
+      toast.error('Failed to get response from bot');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => { //Kept from original
