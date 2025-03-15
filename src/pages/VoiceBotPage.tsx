@@ -56,8 +56,16 @@ const VoiceBotPage = () => {
 
   const startListening = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaRecorderRef.current = new MediaRecorder(stream);
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          sampleRate: 16000
+        } 
+      });
+      mediaRecorderRef.current = new MediaRecorder(stream, {
+        mimeType: 'audio/wav'
+      });
       audioChunksRef.current = [];
       mediaRecorderRef.current.ondataavailable = (event) => {
         audioChunksRef.current.push(event.data);
@@ -97,10 +105,11 @@ const VoiceBotPage = () => {
       });
 
       // Create audio file from chunks
-      const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+      const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
       const formData = new FormData();
-      formData.append('file', audioBlob, 'audio.webm');
+      formData.append('file', audioBlob, 'audio.wav');
       formData.append('model', 'whisper-1');
+      formData.append('language', 'en');
 
       try {
         const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
@@ -110,6 +119,11 @@ const VoiceBotPage = () => {
           },
           body: formData
         });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error?.message || 'Transcription failed');
+        }
 
         if (!response.ok) {
           throw new Error('Transcription failed');
