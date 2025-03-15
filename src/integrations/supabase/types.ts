@@ -6,23 +6,6 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export type UserProfile = {
-  id: string;
-  username: string | null;
-  bio: string | null;
-  created_at: string;
-  updated_at: string;
-}
-
-export type UserActivity = {
-  id: string;
-  user_id: string;
-  type: string;
-  description: string;
-  content: any;
-  created_at: string;
-}
-
 export type Database = {
   public: {
     Tables: {
@@ -74,34 +57,6 @@ export type Database = {
         }
         Relationships: []
       }
-      user_profiles: {
-        Row: UserProfile;
-        Insert: Omit<UserProfile, 'created_at'>;
-        Update: Partial<Omit<UserProfile, 'id' | 'created_at'>>;
-      };
-      user_activities: {
-        Row: UserActivity;
-        Insert: Omit<UserActivity, 'id' | 'created_at'>;
-        Update: Partial<Omit<UserActivity, 'id' | 'user_id' | 'created_at'>>;
-      };
-      user_scores: {
-        Row: {
-          id: string
-          user_id: string
-          quiz_type: string
-          score: number
-          total_questions: number
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          quiz_type: string
-          score: number
-          total_questions: number
-          created_at?: string
-        }
-      }
     }
     Views: {
       [_ in never]: never
@@ -136,7 +91,7 @@ export type Tables<
     ? R
     : never
   : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] &
-      PublicSchema["Views"])
+        PublicSchema["Views"])
     ? (PublicSchema["Tables"] &
         PublicSchema["Views"])[PublicTableNameOrOptions] extends {
         Row: infer R
