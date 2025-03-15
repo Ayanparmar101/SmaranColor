@@ -42,7 +42,10 @@ export default function DashboardPage() {
   const updateProfile = async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
+      if (!session) {
+        toast.error('Please sign in first');
+        return;
+      }
 
       const { error } = await supabase
         .from('user_profiles')
@@ -51,6 +54,8 @@ export default function DashboardPage() {
           username,
           bio,
           updated_at: new Date().toISOString(),
+        }, {
+          onConflict: 'id'
         });
 
       if (error) throw error;
